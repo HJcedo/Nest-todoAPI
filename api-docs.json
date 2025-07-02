@@ -1,0 +1,186 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2025-06-08T12:00:00.000Z",
+  "__export_source": "insomnia.desktop.app",
+  "resources": [
+    {
+      "_id": "wrk_tasks_api",
+      "created": 1680000000000,
+      "description": "",
+      "name": "Tasks API",
+      "type": "workspace",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_tasks_api",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000001,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000",
+        "token": ""
+      },
+      "_type": "environment"
+    },
+    {
+      "_id": "req_auth_register",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000107,
+      "name": "Register",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/Register",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_login",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000108,
+      "name": "Login",
+      "method": "POST",
+      "url": "{{ base_url }}/auth/Login",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"user@example.com\",\n  \"password\": \"123456\"\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_post_task",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000100,
+      "name": "Create Task",
+      "method": "POST",
+      "url": "{{ base_url }}/tasks",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Estudar NestJS\",\n  \"description\": \"Praticar com Prisma e DTOs\",\n  \"completed\": false\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_all_tasks",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000101,
+      "name": "Get All Tasks",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_task_by_id",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000102,
+      "name": "Get Task by ID",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks/{{ task_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_search_tasks",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000103,
+      "name": "Search Tasks by Title",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks/search?title=nest",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_get_by_status",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000104,
+      "name": "Get Tasks by Completion Status",
+      "method": "GET",
+      "url": "{{ base_url }}/tasks/status/true",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_update_task",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000105,
+      "name": "Update Task",
+      "method": "PUT",
+      "url": "{{ base_url }}/tasks/{{ task_id }}",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Atualizado - Estudar NestJS\",\n  \"description\": \"Atualização da descrição\",\n  \"completed\": true\n}"
+      },
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        },
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    },
+    {
+      "_id": "req_delete_task",
+      "parentId": "wrk_tasks_api",
+      "created": 1680000000106,
+      "name": "Delete Task",
+      "method": "DELETE",
+      "url": "{{ base_url }}/tasks/{{ task_id }}",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        }
+      ],
+      "_type": "request"
+    }
+  ]
+}
