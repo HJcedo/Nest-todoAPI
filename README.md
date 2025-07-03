@@ -21,78 +21,330 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# 📘 Documentação Técnica do Back-end (NestJS)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 📑 Table of Contents
 
-## Project setup
+1. Introdução Geral
+2. Estrutura do Projeto
+3. Inicialização e Configuração
+4. Módulo Principal (App)
+5. Módulo de Usuários
+   - DTOs
+   - Controller
+   - Service
+   - Module
+6. Módulo de Autenticação
+   - Controller
+   - Service
+   - Guards
+   - Strategies
+7. Observações Gerais
 
-```bash
-$ npm install
+---
+
+## 1️⃣ Introdução Geral
+
+Este projeto é o back-end de um aplicativo mobile de gerenciamento de tarefas, desenvolvido com:
+
+- **NestJS** (framework Node.js)
+- **PostgreSQL** para persistência
+- **JWT** para autenticação
+
+---
+
+## 2️⃣ Estrutura do Projeto
+
+```
+src/
+├── app.controller.ts
+├── app.module.ts
+├── app.service.ts
+├── main.ts
+├── users/
+│   ├── users.controller.ts
+│   ├── users.service.ts
+│   ├── users.module.ts
+│   └── dto/
+│       ├── create-user.dto.ts
+│       ├── login-user.dto.ts
+│       └── update-user.dto.ts
+├── auth/
+│   ├── auth.controller.ts
+│   ├── auth.service.ts
+│   ├── auth.module.ts
+│   ├── jwt-auth.guard.ts
+│   ├── jwt.strategy.ts
+│   └── local.strategy.ts
 ```
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## 3️⃣ Inicialização e Configuração
 
-# watch mode
-$ npm run start:dev
+1. **Instalar dependências**
 
-# production mode
-$ npm run start:prod
+   ```bash
+   npm install
+   ```
+
+2. \*\*Criar arquivo \*\*\`\`
+
+   ```env
+   DATABASE_URL=postgres://<usuario>:<senha>@localhost:5432/<nome_database>
+   JWT_SECRET=sua_chave_secreta
+   ```
+
+3. **Rodar migrations (se usar TypeORM)**
+
+   ```bash
+   npm run typeorm migration:run
+   ```
+
+4. **Iniciar servidor**
+
+   ```bash
+   npm run start:dev
+   ```
+
+5. **Rodar testes**
+
+   ```bash
+   npm run test
+   ```
+
+---
+
+## 4️⃣ Módulo Principal (App)
+
+### main.ts
+
+Ponto de entrada da aplicação:
+
+```typescript
+async function bootstrap() {
+  const app = await NestFactory.create(AppModule);
+  await app.listen(3000);
+}
+bootstrap();
 ```
 
-## Run tests
+---
 
-```bash
-# unit tests
-$ npm run test
+### app.module.ts
 
-# e2e tests
-$ npm run test:e2e
+Módulo raiz que conecta tudo:
 
-# test coverage
-$ npm run test:cov
+```typescript
+@Module({
+  imports: [
+    UsersModule,
+    AuthModule,
+    // Ex.: TypeOrmModule.forRoot({...})
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
 ```
 
-## Deployment
+---
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### app.controller.ts
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Exemplo de rota raiz:
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```typescript
+@Get()
+getHello(): string {
+  return 'Hello World!';
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+### app.service.ts
 
-Check out a few resources that may come in handy when working with NestJS:
+Serviço auxiliar com métodos de exemplo.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+## 5️⃣ Módulo de Usuários
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Gerencia registro, login, listagem e atualização de usuários.
 
-## Stay in touch
+---
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### DTOs
 
-## License
+#### create-user.dto.ts
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+```typescript
+export class CreateUserDto {
+  email: string;
+  senha: string;
+}
+```
+
+#### login-user.dto.ts
+
+```typescript
+export class LoginUserDto {
+  email: string;
+  senha: string;
+}
+```
+
+#### update-user.dto.ts
+
+```typescript
+export class UpdateUserDto {
+  email?: string;
+  senha?: string;
+}
+```
+
+---
+
+### Controller
+
+Rotas principais:
+
+| Método | Rota            | Descrição            |
+| ------ | --------------- | -------------------- |
+| POST   | /users/register | Cria um usuário      |
+| POST   | /users/login    | Login                |
+| GET    | /users          | Lista usuários       |
+| GET    | /users/\:id     | Busca usuário por ID |
+| PATCH  | /users/\:id     | Atualiza usuário     |
+| DELETE | /users/\:id     | Remove usuário       |
+
+Exemplo:
+
+```typescript
+@Post('register')
+create(@Body() dto: CreateUserDto) {
+  return this.usersService.create(dto);
+}
+```
+
+---
+
+### Service
+
+Principais métodos:
+
+- `create()`: cria novo usuário
+- `login()`: autentica
+- `findAll()`: lista usuários
+- `findOne(id)`: busca por ID
+- `update(id, dto)`: atualiza dados
+- `remove(id)`: exclui usuário
+
+---
+
+### Module
+
+```typescript
+@Module({
+  controllers: [UsersController],
+  providers: [UsersService],
+})
+export class UsersModule {}
+```
+
+---
+
+## 6️⃣ Módulo de Autenticação
+
+Responsável pela validação de credenciais e emissão de tokens JWT.
+
+---
+
+### Controller
+
+| Método | Rota        | Descrição                  |
+| ------ | ----------- | -------------------------- |
+| POST   | /auth/login | Autentica e gera token JWT |
+
+Exemplo:
+
+```typescript
+@Post('login')
+@UseGuards(LocalAuthGuard)
+async login(@Request() req) {
+  return this.authService.login(req.user);
+}
+```
+
+---
+
+### Service
+
+Principais métodos:
+
+- `validateUser(email, senha)`: valida credenciais
+- `login(user)`: gera token JWT
+
+Exemplo:
+
+```typescript
+async login(user: any) {
+  const payload = { username: user.email, sub: user.id };
+  return {
+    access_token: this.jwtService.sign(payload),
+  };
+}
+```
+
+---
+
+### Guards
+
+Protege rotas autenticadas:
+
+```typescript
+@Injectable()
+export class JwtAuthGuard extends AuthGuard('jwt') {}
+```
+
+Para proteger uma rota:
+
+```typescript
+@UseGuards(JwtAuthGuard)
+@Get('profile')
+getProfile(@Request() req) {
+  return req.user;
+}
+```
+
+---
+
+### Strategies
+
+#### jwt.strategy.ts
+
+Valida o token e extrai payload:
+
+```typescript
+PassportStrategy(JwtStrategy) {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  ignoreExpiration: false,
+  secretOrKey: process.env.JWT_SECRET,
+}
+```
+
+#### local.strategy.ts
+
+Valida credenciais durante o login chamando `validate()` do AuthService.
+
+---
+
+## 7️⃣ Observações Gerais
+
+- **Hash de Senhas**: use `bcrypt` antes de salvar.
+- **Validação DTOs**: recomenda-se `class-validator`.
+- **Expiração do Token**: configure `expiresIn` no `sign()`.
+- **Proteção de Rotas**: use `JwtAuthGuard` em todas as rotas privadas.
+
+
